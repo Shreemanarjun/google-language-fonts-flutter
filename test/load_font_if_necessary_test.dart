@@ -14,7 +14,12 @@ import 'package:http/http.dart' as http;
 import 'package:mockito/mockito.dart';
 import 'package:path_provider/path_provider.dart';
 
-class MockHttpClient extends Mock implements http.Client {}
+class MockHttpClient extends Mock implements http.Client {
+  Future<http.Response> gets(dynamic uri, {dynamic headers}) {
+    super.noSuchMethod(Invocation.method(#get, [uri], {#headers: headers}));
+    return Future.value(http.Response('', 200));
+  }
+}
 
 class MockAssetManifest extends Mock implements AssetManifest {}
 
@@ -31,7 +36,7 @@ final _fakeResponseFile = GoogleFontsFile(
 
 var printLog = <String>[];
 
-void overridePrint(Future<Null> testFn()) => () {
+void overridePrint(Future<Null> Function() testFn) => () {
       var spec = ZoneSpecification(print: (_, __, ___, msg) {
         // Add to log instead of printing to stdout
         printLog.add(msg);
@@ -39,19 +44,24 @@ void overridePrint(Future<Null> testFn()) => () {
       return Zone.current.fork(specification: spec).run(testFn);
     };
 
-// NOTE: Some tests in this file can only run on macOS for now!
+// TODO: Test passes only on CI on macOS for some reason!
 void main() {
+  late Directory directory;
+
+  late MockHttpClient _httpClient;
+
   setUp(() async {
-    httpClient = MockHttpClient();
+    _httpClient = MockHttpClient();
+    httpClient = _httpClient;
     assetManifest = MockAssetManifest();
     GoogleFonts.config.allowRuntimeFetching = true;
-    when(httpClient.get(any)).thenAnswer((_) async {
+    when(_httpClient.gets(any)).thenAnswer((_) async {
       return http.Response(_fakeResponse, 200);
     });
 
     // The following snippet pulled from
     //  * https://flutter.dev/docs/cookbook/persistence/reading-writing-files#testing
-    final directory = await Directory.systemTemp.createTemp();
+    directory = await Directory.systemTemp.createTemp();
     const MethodChannel('plugins.flutter.io/path_provider')
         .setMockMethodCallHandler((methodCall) async {
       if (methodCall.method == 'getApplicationSupportDirectory') {
@@ -62,6 +72,7 @@ void main() {
   });
 
   tearDown(() {
+    directory.deleteSync(recursive: true);
     printLog.clear();
     clearCache();
   });
@@ -79,13 +90,13 @@ void main() {
 
     await loadFontIfNecessary(fakeDescriptor);
 
-    verify(httpClient.get(anything)).called(1);
+    verify(_httpClient.gets(anything)).called(1);
   });
 
   testWidgets('loadFontIfNecessary method throws if font cannot be loaded',
       (tester) async {
     // Mock a bad response.
-    when(httpClient.get(any)).thenAnswer((_) async {
+    when(_httpClient.gets(any)).thenAnswer((_) async {
       return http.Response('fake response body - failure', 300);
     });
 
@@ -106,7 +117,8 @@ void main() {
       expect(printLog.length, 1);
       expect(
         printLog[0],
-        startsWith('google_language_fonts was unable to load font Foo-BlackItalic'),
+        startsWith(
+            'google_language_fonts was unable to load font Foo-BlackItalic'),
       );
     });
   });
@@ -131,7 +143,7 @@ void main() {
       expect(printLog.length, 1);
       expect(
         printLog[0],
-        startsWith("google_language_fonts was unable to load font Foo-Regular"),
+        startsWith('google_language_fonts was unable to load font Foo-Regular'),
       );
       expect(
         printLog[0],
@@ -141,7 +153,7 @@ void main() {
       );
     });
 
-    verifyNever(httpClient.get(anything));
+    verifyNever(_httpClient.gets(anything));
   });
 
   testWidgets(
@@ -160,15 +172,15 @@ void main() {
 
     // 1st call.
     await loadFontIfNecessary(fakeDescriptor);
-    verify(httpClient.get(anything)).called(1);
+    verify(_httpClient.gets(anything)).called(1);
 
     // 2nd call.
     await loadFontIfNecessary(fakeDescriptor);
-    verifyNever(httpClient.get(anything));
+    verifyNever(_httpClient.gets(anything));
 
     // 3rd call.
     await loadFontIfNecessary(fakeDescriptor);
-    verifyNever(httpClient.get(anything));
+    verifyNever(_httpClient.gets(anything));
   });
 
   testWidgets(
@@ -190,7 +202,7 @@ void main() {
       loadFontIfNecessary(fakeDescriptor),
       loadFontIfNecessary(fakeDescriptor)
     ]);
-    verify(httpClient.get(anything)).called(1);
+    verify(_httpClient.gets(anything)).called(1);
   });
 
   testWidgets(
@@ -208,16 +220,16 @@ void main() {
     );
 
     // Have the first call throw an error.
-    when(httpClient.get(any)).thenThrow('error');
+    when(_httpClient.gets(any)).thenThrow('error');
     await loadFontIfNecessary(fakeDescriptor);
-    verify(httpClient.get(any)).called(1);
+    verify(_httpClient.gets(any)).called(1);
 
     // The second call will retry the http fetch.
-    when(httpClient.get(any)).thenAnswer((_) async {
+    when(_httpClient.gets(any)).thenAnswer((_) async {
       return http.Response(_fakeResponse, 200);
     });
     await loadFontIfNecessary(fakeDescriptor);
-    verify(httpClient.get(any)).called(1);
+    verify(_httpClient.gets(any)).called(1);
   });
 
   testWidgets('loadFontIfNecessary method writes font file', (tester) async {
@@ -247,7 +259,7 @@ void main() {
   testWidgets(
       'loadFontIfNecessary does not save anything to disk if the file does not '
       'match the expected hash', (tester) async {
-    when(httpClient.get(any)).thenAnswer((_) async {
+    when(_httpClient.gets(any)).thenAnswer((_) async {
       return http.Response('malicious intercepted response', 200);
     });
     final fakeDescriptor = GoogleFontsDescriptor(
@@ -267,5 +279,27 @@ void main() {
     await loadFontIfNecessary(fakeDescriptor);
     directoryContents = await getApplicationSupportDirectory();
     expect(directoryContents.listSync().isEmpty, isTrue);
+  });
+
+  test("loadFontByteData doesn't fail", () {
+    expect(
+      () async => loadFontByteData('fontFamily', Future.value(ByteData(0))),
+      returnsNormally,
+    );
+    expect(
+      () async => loadFontByteData('fontFamily', Future.value(null)),
+      returnsNormally,
+    );
+    expect(
+      () async => loadFontByteData('fontFamily', null),
+      returnsNormally,
+    );
+    expect(
+      () async => loadFontByteData(
+        'fontFamily',
+        Future.delayed(Duration(milliseconds: 100), () => null),
+      ),
+      returnsNormally,
+    );
   });
 }

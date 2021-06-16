@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,14 +11,14 @@ import 'package:google_language_fonts/src/asset_manifest.dart';
 const _fakeAssetManifestText = '{"value": ["fake"]}';
 var _assetManifestLoadCount = 0;
 
-AssetManifest assetManifest;
+late AssetManifest assetManifest;
 
 void main() {
   setUpAll(() async {
-    ServicesBinding.instance.defaultBinaryMessenger
-        .setMockMessageHandler('flutter/assets', (dynamic message) {
+    ServicesBinding.instance!.defaultBinaryMessenger
+        .setMockMessageHandler('flutter/assets', (message) {
       _assetManifestLoadCount++;
-      final Uint8List encoded = utf8.encoder.convert(_fakeAssetManifestText);
+      final encoded = utf8.encoder.convert(_fakeAssetManifestText);
       return Future.value(encoded.buffer.asByteData());
     });
     // Disable cache so that we can see if AssetManifest.json is requested more
@@ -35,9 +34,9 @@ void main() {
   testWidgets('AssetManifest loads once when called multiple times in parallel',
       (tester) async {
     final manifestJsons = await Future.wait([
-      assetManifest.json(),
-      assetManifest.json(),
-      assetManifest.json(),
+      assetManifest.json()!,
+      assetManifest.json()!,
+      assetManifest.json()!,
     ]);
     _verifyAssetManifestLoadedOnce();
     manifestJsons.forEach(_verifyAssetManifestContent);
@@ -47,9 +46,9 @@ void main() {
       'AssetManifest loads once when called multiple times in parallel then multiple times in succession',
       (tester) async {
     final manifestJsons = await Future.wait([
-      assetManifest.json(),
-      assetManifest.json(),
-      assetManifest.json(),
+      assetManifest.json()!,
+      assetManifest.json()!,
+      assetManifest.json()!,
     ]);
     _verifyAssetManifestLoadedOnce();
     manifestJsons.forEach(_verifyAssetManifestContent);
@@ -84,6 +83,6 @@ void _verifyAssetManifestLoadedOnce() {
   expect(_assetManifestLoadCount, 1);
 }
 
-void _verifyAssetManifestContent(Map<String, dynamic> manifestJson) {
-  expect(manifestJson['value'], ['fake']);
+void _verifyAssetManifestContent(Map<String, dynamic>? manifestJson) {
+  expect(manifestJson!['value'], ['fake']);
 }

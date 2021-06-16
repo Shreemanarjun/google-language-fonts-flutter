@@ -1,8 +1,12 @@
-## [1.0.1] - 2021-02-02
+## [2.0.0]
+
+- Stable null safety release.
+
+## [1.0.1]
 
 - Update README.
 
-## [1.0.0] - 2021-02-02
+## [1.0.0]
 
 - **BREAKING CHANGES:**
     - Import `'google_language_fonts/google_fonts.dart';` was changed to `'google_language_fonts/google_language_fonts.dart';`.
@@ -17,10 +21,10 @@
 
 - Update README. (#13)
 
-## [0.1.1] - 2020-11-16
+## [0.1.1]
 
 - Update README.
 
-## [0.1.0] - 2020-11-16
+## [0.1.0]
 
 - The initial release supports 26 languages and more than 950 fonts from fonts.google.com.

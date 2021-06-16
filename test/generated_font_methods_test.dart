@@ -1,5 +1,3 @@
-import 'package:flutter_test/flutter_test.dart';
-
 // Copyright 2020 The Flutter team. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
@@ -7,11 +5,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
 import 'package:google_language_fonts/src/asset_manifest.dart';
 import 'package:google_language_fonts/src/google_fonts_base.dart';
-import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
+import 'package:mockito/mockito.dart';
 
 class MockHttpClient extends Mock implements http.Client {}
 
@@ -149,7 +148,7 @@ void main() {
   testWidgets('backgroundColor is honored when passed in as a top-level param',
       (tester) async {
     final outputTextStyle =
-    LatinFonts.rancho(backgroundColor: const Color(0xFACEFEED));
+        LatinFonts.rancho(backgroundColor: const Color(0xFACEFEED));
 
     expect(outputTextStyle.backgroundColor, equals(const Color(0xFACEFEED)));
   });
@@ -631,19 +630,19 @@ void main() {
     final textTheme = LatinFonts.oswaldTextTheme();
     final expectedFamilyWithVariant = 'Oswald_regular';
 
-    expect(textTheme.headline1.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.headline2.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.headline3.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.headline4.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.headline5.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.headline6.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.subtitle1.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.subtitle2.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.bodyText1.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.bodyText2.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.caption.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.button.fontFamily, equals(expectedFamilyWithVariant));
-    expect(textTheme.overline.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline1!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline2!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline3!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline4!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline5!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline6!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.subtitle1!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.subtitle2!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.bodyText1!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.bodyText2!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.caption!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.button!.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.overline!.fontFamily, equals(expectedFamilyWithVariant));
   });
 
   testWidgets('TextTheme method works with a base textTheme', (tester) async {
@@ -658,13 +657,13 @@ void main() {
     final expectedFamilyWithVariant = 'Oswald_regular';
 
     // Default is preserved.
-    expect(textTheme.headline4.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.headline4!.fontFamily, equals(expectedFamilyWithVariant));
     // Different font family gets overridden by oswald.
-    expect(textTheme.bodyText2.fontFamily, equals(expectedFamilyWithVariant));
+    expect(textTheme.bodyText2!.fontFamily, equals(expectedFamilyWithVariant));
     // Weight is preserved.
-    expect(textTheme.headline3.fontWeight, equals(FontWeight.w700));
+    expect(textTheme.headline3!.fontWeight, equals(FontWeight.w700));
     // Style is preserved.
-    expect(textTheme.subtitle2.fontStyle, equals(FontStyle.italic));
+    expect(textTheme.subtitle2!.fontStyle, equals(FontStyle.italic));
   });
 
   //////////////////
@@ -696,7 +695,7 @@ void main() {
 
     for (var fontFamily in allFonts) {
       final dynamicFont = GoogleFonts.getTextTheme(fontFamily);
-      expect(dynamicFont.bodyText1.fontFamily, isNotNull);
+      expect(dynamicFont.bodyText1!.fontFamily, isNotNull);
     }
 
     expect(allFonts, isNotEmpty);

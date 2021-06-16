@@ -1,15 +1,12 @@
-import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
-
 /// This model class is used for reading content from fonts.json and
 /// error_handled\_fonts.json files.
-class LanguageFonts extends Equatable {
+class LanguageFonts {
   final String langName;
   final List<String> fontNames;
 
   const LanguageFonts({
-    @required this.langName,
-    @required this.fontNames,
+    required this.langName,
+    required this.fontNames,
   });
 
   factory LanguageFonts.fromJson(Map<String, dynamic> json) => LanguageFonts(
@@ -23,5 +20,13 @@ class LanguageFonts extends Equatable {
       };
 
   @override
-  List<Object> get props => [langName, fontNames];
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LanguageFonts &&
+          runtimeType == other.runtimeType &&
+          langName == other.langName &&
+          fontNames == other.fontNames;
+
+  @override
+  int get hashCode => langName.hashCode ^ fontNames.hashCode;
 }
