@@ -1,5 +1,6 @@
 name: google_language_fonts_tester
 description: A Flutter application showcasing how to use the google_language_fonts package.
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
@@ -8,7 +9,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
   google_language_fonts:
     path: ../
 
