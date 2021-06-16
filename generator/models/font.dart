@@ -10,12 +10,12 @@ class Font {
 
   factory Font.fromJson(Map<String, dynamic> json) => Font(
         family: json['family'],
-        langSubsets: json['langSubsets']?.cast<String>(),
+        langSubsets: json['subsets']?.cast<String>(),
       );
 
   Map<String, dynamic> toJson() => {
         'family': family,
-        'langSubsets': langSubsets,
+        'subsets': langSubsets,
       };
 
   @override
