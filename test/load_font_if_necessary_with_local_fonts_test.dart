@@ -48,7 +48,7 @@ void main() {
     });
 
     // Add Foo-BlackItalic to mock asset bundle.
-    ServicesBinding.instance!.defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (message) {
       final encoded =
           utf8.encoder.convert('{"google_fonts/Foo-BlackItalic.ttf":'
@@ -59,8 +59,11 @@ void main() {
     // The following snippet pulled from
     //  * https://flutter.dev/docs/cookbook/persistence/reading-writing-files#testing
     final directory = await Directory.systemTemp.createTemp();
-    const MethodChannel('plugins.flutter.io/path_provider')
-        .setMockMethodCallHandler((methodCall) async {
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+            MethodChannel('plugins.flutter.io/path_provider'),
+            (methodCall) async {
       if (methodCall.method == 'getApplicationSupportDirectory') {
         return directory.path;
       }

@@ -4,18 +4,17 @@
 
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_language_fonts/src/asset_manifest.dart';
 
 const _fakeAssetManifestText = '{"value": ["fake"]}';
 var _assetManifestLoadCount = 0;
 
-late AssetManifest assetManifest;
+late CustomAssetManifest assetManifest;
 
 void main() {
   setUpAll(() async {
-    ServicesBinding.instance!.defaultBinaryMessenger
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMessageHandler('flutter/assets', (message) {
       _assetManifestLoadCount++;
       final encoded = utf8.encoder.convert(_fakeAssetManifestText);
@@ -23,12 +22,12 @@ void main() {
     });
     // Disable cache so that we can see if AssetManifest.json is requested more
     // than once.
-    assetManifest = AssetManifest(enableCache: false);
+    assetManifest = CustomAssetManifest(enableCache: false);
   });
 
   tearDown(() async {
     _assetManifestLoadCount = 0;
-    AssetManifest.reset();
+    CustomAssetManifest.reset();
   });
 
   testWidgets('AssetManifest loads once when called multiple times in parallel',

@@ -5,7 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_language_fonts/google_language_fonts.dart';
-import 'package:google_language_fonts/src/asset_manifest.dart';
+import 'package:google_language_fonts/src/asset_manifest.dart' as asset;
 import 'package:google_language_fonts/src/google_fonts_base.dart';
 import 'package:google_language_fonts/src/google_fonts_descriptor.dart';
 import 'package:google_language_fonts/src/google_fonts_family_with_variant.dart';
@@ -21,7 +21,7 @@ class MockHttpClient extends Mock implements http.Client {
   }
 }
 
-class MockAssetManifest extends Mock implements AssetManifest {}
+class MockAssetManifest extends Mock implements asset.CustomAssetManifest {}
 
 const _fakeResponse = 'fake response body - success';
 // The number of bytes in _fakeResponse.
@@ -62,13 +62,16 @@ void main() {
     // The following snippet pulled from
     //  * https://flutter.dev/docs/cookbook/persistence/reading-writing-files#testing
     directory = await Directory.systemTemp.createTemp();
-    const MethodChannel('plugins.flutter.io/path_provider')
-        .setMockMethodCallHandler((methodCall) async {
-      if (methodCall.method == 'getApplicationSupportDirectory') {
-        return directory.path;
-      }
-      return null;
-    });
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      MethodChannel('plugins.flutter.io/path_provider'),
+      (methodCall) async {
+        if (methodCall.method == 'getApplicationSupportDirectory') {
+          return directory.path;
+        }
+        return null;
+      },
+    );
   });
 
   tearDown(() {

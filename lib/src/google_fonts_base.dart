@@ -2,17 +2,16 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'dart:typed_data';
 import 'dart:ui';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_language_fonts/src/asset_manifest.dart';
 import 'package:http/http.dart' as http;
 
 import '../google_language_fonts.dart';
-import 'asset_manifest.dart';
 import 'file_io.dart' // Stubbed implementation by default.
 // Concrete implementation if File IO is available.
     if (dart.library.io) 'file_io_desktop_and_mobile.dart' as file_io;
@@ -30,7 +29,7 @@ final Set<String> _loadedFonts = {};
 http.Client httpClient = http.Client();
 
 @visibleForTesting
-AssetManifest assetManifest = AssetManifest();
+CustomAssetManifest assetManifest = CustomAssetManifest();
 
 @visibleForTesting
 void clearCache() => _loadedFonts.clear();

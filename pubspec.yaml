@@ -4,7 +4,7 @@ version: 2.0.0
 repository: https://github.com/mzdm/google-language-fonts-flutter
 
 environment:
-  sdk: ">=2.12.0 <3.0.0"
+f  sdk: ">=2.14.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -21,6 +21,6 @@ dev_dependencies:
   mockito: ^5.0.7
   mustache_template: ^2.0.0
   protobuf: ^2.0.0
-  build_runner: ^1.11.5
+  build_runner: ^2.4.2
   protoc_plugin: ^20.0.0
   console: ^4.1.0

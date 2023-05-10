@@ -29,7 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     final display1 =
-        Theme.of(context).textTheme.headline5!.copyWith(fontSize: 30.0);
+        Theme.of(context).textTheme.headlineSmall!.copyWith(fontSize: 30.0);
 
     return Scaffold(
       appBar: AppBar(
