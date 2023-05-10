@@ -1,6 +1,6 @@
 name: google_language_fonts
 description: Include easily Google Fonts which are compatible with your languages.
-version: 2.0.0
+version: 3.0.0
 repository: https://github.com/mzdm/google-language-fonts-flutter
 
 environment:

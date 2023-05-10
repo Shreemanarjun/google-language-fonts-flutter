@@ -1,3 +1,6 @@
+## 3.0.0
+- dart 3 with null safety
+
 ## 2.0.0
 - Added new fonts.
 - Font renamed: Muli -> Mulish.
