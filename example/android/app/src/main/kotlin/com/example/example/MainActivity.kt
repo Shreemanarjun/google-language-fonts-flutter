@@ -1,7 +1,6 @@
-package com.example.google_language_fonts_tester
+package com.example.example
 
 import io.flutter.embedding.android.FlutterActivity
 
 class MainActivity: FlutterActivity() {
-
 }
