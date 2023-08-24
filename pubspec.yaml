@@ -4,7 +4,7 @@ version: 3.0.0
 repository: https://github.com/mzdm/google-language-fonts-flutter
 
 environment:
-  sdk: ">=2.14.0 <4.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
